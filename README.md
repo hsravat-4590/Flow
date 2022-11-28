@@ -1,4 +1,5 @@
 # Flow
+[![Build Gradle project](https://github.com/hsravat-4590/Flow/actions/workflows/build.yml/badge.svg)](https://github.com/hsravat-4590/Flow/actions/workflows/build.yml)
 
 Flow is a Multiplatform Library which allows you to use a custom DSL to define a process flow
 
