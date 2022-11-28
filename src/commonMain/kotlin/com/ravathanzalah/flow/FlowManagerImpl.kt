@@ -91,10 +91,11 @@ class FlowManagerImpl(
         flows[name] = flow
     }
 
-    override fun removeFlow(name: String) {
-        currentFlow?.takeIf { it.name == name }.let {
+    override fun removeFlow(name: String){
+        val flowMatch = currentFlow?.takeIf { it.name == name }
+        flowMatch?.let {
             throw IllegalStateException("Cannot remove a flow that is in progress")
         }
-        flows.remove(name) // IDE says this is unreachable but it is
+        flows.remove(name)
     }
 }
