@@ -30,10 +30,61 @@ class AddStep: ProcessStep {
 }
 ```
 
-Process steps can be more complex and you're free to pass in other information via constructors or through dependency injection.
+Process steps can be more complex, and you're free to pass in other information via constructors or through dependency injection.
 
 ### Add a StepInjector implementation
+The step injector is a simplified approach to dependency injection which allows you to inject step classes into a flow. 
+There are several advantages to this approach against providing an instance at the time of defining the flow mainly that you can use existing DI code.
+
+To add a custom implementation, you need to implement the `StepInjector` interface
 
 ### Define your Flow
 
+The Flow DSL makes it easy to define your flow. For example:
+```kotlin
+fun getFlow(): Flow {
+    return flow("DownloadFileFlow") {
+        startingStep = "getMetadata"
+        bundle {
+            // The bundle can store some info and can be edited by each step in the process
+            add("UserName", "user1")
+            add("password", "Pa55word")
+        }
+        step("getMetadata", GetMetadata::class) {
+            actionHandler {
+                handler(FlowAction.CONTINUE) {
+                    nextStep = "downloadFile"
+                }
+                handler(FlowAction.ERROR) {
+                    nextStep = "metadataError"
+                }
+            }
+        }
+        step("downloadFile", DownloadFile::class) {
+            actionHandler {
+                handler(FlowAction.EXIT) {
+                    // End of Flow
+                }
+            }
+        }
+        ...
+    }
+}
+```
+
 ### Execute the Flow
+
+Flows are executed and controlled by a `FlowManager`. There is a default implementation (`FlowManagerImpl`) which works but you may use your own implementation for advanced use cases
+
+To execute a flow:
+
+```kotlin
+class Runtime(val flowManager: FlowManager) {
+    
+    val flowName = "testFlow"
+    
+    fun runFlow() {
+        flowManager.startFlow(testFlow)
+    }
+}
+```
